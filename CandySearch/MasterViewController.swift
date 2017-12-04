@@ -39,13 +39,21 @@ class MasterViewController: UIViewController, UITableViewDataSource, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         populingCandies()
-        
+        //configAnotherTutor()
         // Setup the Search Controller
         
         searchController.searchResultsUpdater = self //delegate
         searchController.obscuresBackgroundDuringPresentation = false //if you use another vc
         searchController.searchBar.placeholder = "Search Candies" // Placeholder
-        navigationItem.searchController = searchController // in iOS 11 you need set in navigationItem , because the Interface Builder isn't compatible
+        
+        // in iOS 11 you need set in navigationItem , because the Interface Builder isn't compatible
+        if #available(iOS 11.0, *) {
+            self.navigationItem.searchController = searchController
+            // Search bar is always visible
+            self.navigationItem.hidesSearchBarWhenScrolling = false
+        } else {
+            tableView.tableHeaderView = searchController.searchBar
+        }
         definesPresentationContext = true //doesnt put searchController behind the view.
         
         // Setup the Scope Bar
@@ -72,6 +80,16 @@ class MasterViewController: UIViewController, UITableViewDataSource, UITableView
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+    
+    func configAnotherTutor(){
+        let textField = searchController.searchBar.value(forKey: "searchField") as! UITextField
+        let glassIconView = textField.leftView as! UIImageView
+        glassIconView.image = glassIconView.image?.withRenderingMode(.alwaysTemplate)
+        glassIconView.tintColor = .white
+        let clearButton = textField.value(forKey: "clearButton") as! UIButton
+        clearButton.setImage(clearButton.imageView?.image?.withRenderingMode(.alwaysTemplate), for: .normal)
+        clearButton.tintColor = .white
     }
     
     func populingCandies() {
